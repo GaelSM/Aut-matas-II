@@ -61,6 +61,7 @@ namespace Semantica
                 { 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 37, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36  },
                 { 36, 36, 36, 36, 36, 36, 35, 36, 36, 36, 36, 36, 37, 36, 36, 36, 36, 36, 36, 36, 36, 36,  0, 36, 36, 36  }
             };
+        /*
         public Lexico()
         {
             logger = new StreamWriter("./main.log");
@@ -80,8 +81,9 @@ namespace Semantica
 
             printData("main");
         }
+        */
 
-        public Lexico(string file)
+        public Lexico(string file = "main.cpp")
         {
             if (!(Path.GetExtension(file) == ".cpp"))
             {
@@ -107,11 +109,6 @@ namespace Semantica
 
             this.file = new StreamReader("./" + file);
 
-            printData(fileName);
-        }
-
-        private void printData(string fileName)
-        {
             logger.WriteLine("Programa: " + fileName + ".cpp ");
             logger.WriteLine("Fecha: " + date.ToString());
         }

@@ -4,6 +4,27 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
+/*
+    DESCRIPTORES DE ACCESO
+    Una propiedad sin un descriptor de acceso set se considera de solo lectura. 
+    Una propiedad sin un descriptor de acceso get se considera de solo escritura.
+    Una propiedad que tiene ambos descriptores de acceso es de lectura y escritura. 
+    
+    GET
+    El bloque de código del descriptor de acceso get se ejecuta cuando se lee la propiedad.
+
+    SET
+    El bloque de código del descriptor de acceso set oinit se ejecuta cuando se asigna un 
+    valor a la propiedad.Usa un parámetro implícito denominado value, 
+    cuyo tipo es el tipo de la propiedad. 
+
+    Las propiedades tienen muchos usos:
+
+    Pueden validar los datos antes de permitir un cambio.
+    Pueden exponer datos de forma transparente en una clase donde esos datos se recuperan de algún otro origen, como una base de datos.
+    Pueden realizar una acción cuando se cambian los datos, como generar un evento o cambiar el valor de otros campos.
+*/
+
 namespace Semantica
 {
     public class Token

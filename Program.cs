@@ -20,8 +20,9 @@ namespace Semantica
                 Console.WriteLine(t.Content);
                 Console.WriteLine(t.Clasification);
 
-                /*Lexico l = new Lexico();
-                l.GetAllTokens();*/
+                Lexico l = new();
+                l.GetAllTokens();
+
                 /*using Lenguaje l = new("prueba.cpp");
                 l.Programa();*/
             }
