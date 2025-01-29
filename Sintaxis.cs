@@ -16,9 +16,10 @@ namespace Semantica
         {
             NextToken();
         }
+        //Comparar texto
         public void match(string content)
         {
-            if (content == getContent())
+            if (content == Content)
             {
                 lastColumn = column;
                 NextToken();
@@ -33,10 +34,10 @@ namespace Semantica
                 throw new Error("Sintaxis: se espera un " + content, logger, line, column);
             }
         }
-
+        //Comparar tipo específico
         public void match(Tipos clasification)
         {
-            if (clasification == getClasification())
+            if (clasification == Clasification)
             {
                 lastColumn = column;
                 NextToken();

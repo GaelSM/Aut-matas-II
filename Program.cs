@@ -11,8 +11,19 @@ namespace Semantica
         {
             try
             {
-                using Lenguaje l = new("prueba.cpp");
-                l.Programa();
+                Token t = new()
+                {
+                    Content = ">=",
+                    Clasification = Tipos.OperadorRelacional
+                };
+
+                Console.WriteLine(t.Content);
+                Console.WriteLine(t.Clasification);
+
+                /*Lexico l = new Lexico();
+                l.GetAllTokens();*/
+                /*using Lenguaje l = new("prueba.cpp");
+                l.Programa();*/
             }
             catch (Exception error)
             {

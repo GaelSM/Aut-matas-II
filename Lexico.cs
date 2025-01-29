@@ -7,18 +7,20 @@ using System.Linq.Expressions;
 
 namespace Semantica
 {
+    //IDisposible es una interfaz para implemetar Destructor
     public class Lexico : Token, IDisposable
     {
         protected int line = 1;
         protected bool wasNewLine;
         protected int column = 0;
         protected int lastColumn = 0;
-        const int F = -1;
-        const int E = -2;
-        readonly StreamReader file;
-        protected StreamWriter logger;
-        protected StreamWriter assembly;
-        readonly DateTime date = DateTime.Now;
+        const int F = -1; //Estado de aceptación Final
+        const int E = -2; //Estado de aceptación Error
+        readonly StreamReader file; //Archivo a leer
+        protected StreamWriter logger; //Archivo para escribir
+        protected StreamWriter assembly; //Archivo para generar ensamblador
+        readonly DateTime date = DateTime.Now; //Escribir la fecha
+        //Matriz de transiciones TRAND
         readonly int[,] TRAND = {
                 {  0,  1,  2, 33,  1, 12, 14,  8,  9, 10, 11, 23, 16, 16, 18, 20, 21, 26, 25, 27, 29, 32, 34,  0,  F, 33  },
                 {  F,  1,  1,  F,  1,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F,  F  },
@@ -73,7 +75,7 @@ namespace Semantica
             }
             else
             {
-                throw new Error("File main.cpp doesn´t exists", logger);
+                throw new Error("File main.cpp doesn´t exist", logger);
             }
 
             printData("main");
@@ -113,14 +115,14 @@ namespace Semantica
             logger.WriteLine("Programa: " + fileName + ".cpp ");
             logger.WriteLine("Fecha: " + date.ToString());
         }
-
+        //Cerrar los recursos abiertos para evitar fugas de recursos
         public void Dispose()
         {
             file.Close();
             logger.Close();
             assembly.Close();
         }
-
+        //Ubicar la columna de la matriz con respecto a un caracter en la matriz TRAND
         private int Column(char c)
         {
             if (c == '\n')
@@ -225,39 +227,40 @@ namespace Semantica
             }
             return 25;
         }
-
+        //Clasificar el estado dependiendo del 
         private void Classify(int state)
         {
             switch (state)
             {
-                case 1: setClasification(Tipos.Indentificador); break;
-                case 2: setClasification(Tipos.Numero); break;
-                case 8: setClasification(Tipos.FinSentencia); break;
-                case 9: setClasification(Tipos.InicioBloque); break;
-                case 10: setClasification(Tipos.FinBloque); break;
-                case 11: setClasification(Tipos.OperadorTernario); break;
+                case 1: Clasification = Tipos.Indentificador; break;
+                case 2: Clasification = Tipos.Numero; break;
+                case 8: Clasification = Tipos.FinSentencia; break;
+                case 9: Clasification = Tipos.InicioBloque; break;
+                case 10: Clasification = Tipos.FinBloque; break;
+                case 11: Clasification = Tipos.OperadorTernario; break;
                 case 12:
-                case 14: setClasification(Tipos.OperadorTermino); break;
-                case 13: setClasification(Tipos.IncrementoTermino); break;
-                case 15: setClasification(Tipos.Puntero); break;
+                case 14: Clasification = Tipos.OperadorTermino; break;
+                case 13: Clasification = Tipos.IncrementoTermino; break;
+                case 15: Clasification = Tipos.Puntero; break;
                 case 16:
-                case 34: setClasification(Tipos.OperadorFactor); break;
-                case 17: setClasification(Tipos.IncrementoFactor); break;
+                case 34: Clasification = Tipos.OperadorFactor; break;
+                case 17: Clasification = Tipos.IncrementoFactor; break;
                 case 18:
                 case 20:
                 case 29:
                 case 32:
-                case 33: setClasification(Tipos.Caracter); break;
+                case 33: Clasification = Tipos.Caracter; break;
                 case 19:
-                case 21: setClasification(Tipos.OperadorLogico); break;
+                case 21: Clasification = Tipos.OperadorLogico; break;
                 case 22:
                 case 24:
                 case 25:
-                case 26: setClasification(Tipos.OperadorRelacional); break;
-                case 23: setClasification(Tipos.Asignacion); break;
-                case 27: setClasification(Tipos.Cadena); break;
+                case 26: Clasification = Tipos.OperadorRelacional; break;
+                case 23: Clasification = Tipos.Asignacion; break;
+                case 27: Clasification = Tipos.Cadena; break;
             }
         }
+        //Leer el siguiente token
         public void NextToken()
         {
             char c;
@@ -268,8 +271,10 @@ namespace Semantica
 
             while (state >= 0)
             {
+                //Leer sin avanzar
                 c = (char) file.Peek();
 
+                //TRAND(Estado actual, )
                 state = TRAND[state, Column(c)];
                 Classify(state);
 
@@ -296,19 +301,20 @@ namespace Semantica
                 }
             }
 
+            //En caso de error
             if (state == E)
             {
                 string message;
 
-                if (getClasification() == Tipos.Numero)
+                if (Clasification == Tipos.Numero)
                 {
                     message = "Lexical, a digit is missing";
                 }
-                else if (getClasification() == Tipos.Cadena)
+                else if (Clasification == Tipos.Cadena)
                 {
                     message = "Lexical, unclosed string";
                 }
-                else if (getClasification() == Tipos.Caracter)
+                else if (Clasification == Tipos.Caracter)
                 {
                     message = "Lexical, invalid character";
                 }
@@ -320,36 +326,36 @@ namespace Semantica
                 throw new Error(message, logger, line, lastColumn);
             }
 
-            setContent(buffer);
+            Content = buffer;
 
-            if (getClasification() == Tipos.Indentificador)
+            if (Clasification == Tipos.Indentificador)
             {
-                switch (getContent())
+                switch (Content)
                 {
                     case "char":
                     case "int":
                     case "float":
-                        setClasification(Tipos.TipoDato);
+                        Clasification = Tipos.TipoDato;
                         break;
                     case "if":
                     case "else":
                     case "do":
                     case "while":
                     case "for":
-                        setClasification(Tipos.PalabraReservada);
+                        Clasification = Tipos.PalabraReservada;
                         break;
                 }
             }
 
             if (!EndOfFile())
             {
-                //logger.WriteLine(getContent() + " ---- " + getClasification());
+                logger.WriteLine(Content + " ---- " + Clasification);
             }
         }
 
         public void GetAllTokens()
         {
-            while (!file.EndOfStream)
+            while (!EndOfFile())
             {
                 NextToken();
             }
@@ -363,6 +369,17 @@ namespace Semantica
 }
 
 /*
+    Está bueno el chisme :)
+    Queseso
+    Modalidad queee?
+    Tsssssssssss
+    Richi GOD o no ?
+
+    FACTO: Memo es GOD
+
+    Cómo que de 0 a 5, ojito, skip, tssssss, racismo
+    Maduro: Persona que...
+    
 
     EXPRESIÓN REGULAR
     Es un método formal el cual a través de una secuencia de 

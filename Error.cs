@@ -6,6 +6,8 @@ using System.IO;
 
 namespace Semantica
 {
+    // Errores personalizados
+    // base manda a llamar el constructor de la super clase
     public class Error : Exception
     {
         public Error(string message) 

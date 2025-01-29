@@ -31,14 +31,22 @@ namespace Semantica
             PalabraReservada
         }
         private string content;
+        public string Content {
+            get => content;
+            set => content = value;
+        }
         private Tipos clasification;
+        public Tipos Clasification {
+            get => clasification;
+            set => clasification = value;
+        }
         public Token()
         {
             content = "";
             clasification = Tipos.Caracter;
         }
 
-        public void setContent(string content) {
+        /*public void setContent(string content) {
             this.content = content;
         }
 
@@ -52,6 +60,6 @@ namespace Semantica
 
         public Tipos getClasification() {
             return clasification;
-        }
+        }*/
     }
 }
