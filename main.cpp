@@ -5,7 +5,23 @@ using System.Threading.Tasks;
 
 static void Main(string[] args)
 {
-  int b = Console.ReadLine();
+  //char e = 256;
+  int a = Console.ReadLine();
+  int b = 3;
+  int c = a + b;
+
+  if(c != 5) {
+    Console.WriteLine("La suma es distinta de 5");
+
+    if(a == 7) {
+      Console.WriteLine("La variable a es igual a 7");
+    } else {
+      Console.WriteLine("Else ejecutado");
+    }
+  } else {
+    Console.WriteLine("La suma de a + b = " + c);
+  }
+  /*int b = Console.ReadLine();
   int a = (3 + 5) * 8 - (10 - 2*b) / b; // 61
   a--;
   a+=40;
@@ -38,5 +54,5 @@ static void Main(string[] args)
     }
   } else {
     Console.WriteLine("Es impar");
-  }
+  }*/
 }

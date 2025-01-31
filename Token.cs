@@ -52,10 +52,20 @@ namespace Semantica
             PalabraReservada
         }
         private string content;
+        //Creando una variable para generar métodos de acceso
+        //a la variable privada content
         public string Content {
             get => content;
             set => content = value;
         }
+        //Ahora puede invocar al método get invocando a la variable Content
+        //Ejemplo: Content es equivalente a getContent()
+        //Quiere decir que manda a llamar al método get y la variable Content
+        //obtiene el valor que tenga actualmente almacenado content
+
+        //Puedes invocar al método set asignandole un valor como a una variable
+        //Ejemplo: Content = "A" es equivalente a setContent("A")
+        //Ahora se le asignará el valor a la propiedad content mediante Content
         private Tipos clasification;
         public Tipos Clasification {
             get => clasification;

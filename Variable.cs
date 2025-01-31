@@ -18,25 +18,54 @@ namespace Semantica
         string nombre;
         float valor;
 
-        public Variable(TipoDato tipo, string nombre, float valor = 0) {
+        public Variable(TipoDato tipo, string nombre, float valor = 0)
+        {
             this.tipo = tipo;
             this.nombre = nombre;
             this.valor = valor;
         }
-
-        public void setValor(float valor) {
-            this.valor = valor;
+        public void setValor(float valor)
+        {
+            if (tipo == TipoDato.Char && valor <= 255)
+            {
+                this.valor = valor;
+            }
+            else if (tipo == TipoDato.Int && valor <= 65535)
+            {
+                this.valor = valor;
+            }
+            else if (tipo == TipoDato.Float)
+            {
+                this.valor = valor;
+            }
+            else
+            {
+                throw new Error("Semántico: no se puede asignar un " + valorToTipoDato(valor) + " a un " + tipo);
+            }
         }
 
-        public float getValor() {
+        private TipoDato valorToTipoDato(float valor) {
+            if(valor <= 255) {
+                return TipoDato.Char;
+            } else if(valor <= 65535) {
+                return TipoDato.Int;
+            } else {
+                return TipoDato.Float;
+            }
+        }
+
+        public float getValor()
+        {
             return valor;
         }
 
-        public string getNombre() {
+        public string getNombre()
+        {
             return nombre;
         }
 
-        public TipoDato getTipoDato() {
+        public TipoDato getTipoDato()
+        {
             return tipo;
         }
     }

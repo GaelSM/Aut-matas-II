@@ -13,8 +13,8 @@ namespace Semantica
 {
     public class Lenguaje : Sintaxis
     {
-        Stack<float> s;
-        List<Variable> l;
+        Stack<float> s; //Evaluar expresiones
+        List<Variable> l; //Lista de variables
         public Lenguaje() : base()
         {
             s = new Stack<float>();
@@ -222,18 +222,28 @@ namespace Semantica
                     else
                     {
                         match("ReadLine");
+                        
                         string? read = Console.ReadLine();
+                        float result;
 
-                        try
-                        {
-                            read = read == null ? "" : read;
-                            float value = float.Parse(read);
-                            v.setValor(value);
-                        }
-                        catch (Exception)
-                        {
+                        if(float.TryParse(read, out result)) {
+                            v.setValor(result);
+                        } else {
                             throw new Error("de Sintaxis: sólo se pueden ingresar números", logger, line, column);
                         }
+
+                        /*try
+                        {
+                            read = read == null ? "" : read;
+                            float value = float.TryParse(read);
+                            v.setValor(value);
+                        }
+                        catch (Exception error)
+                        {
+                            Console.WriteLine(error);
+
+                            throw new Error("de Sintaxis: sólo se pueden ingresar números", logger, line, column);
+                        }*/
                     }
 
                     match("(");
@@ -497,6 +507,7 @@ namespace Semantica
         // MasTermino -> (OperadorTermino Termino)?
         private void MasTermino()
         {
+            //Infix to Postfix
             if (Clasification == Tipos.OperadorTermino)
             {
                 string operador = Content;
