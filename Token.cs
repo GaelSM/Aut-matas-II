@@ -1,30 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-
-/*
-    DESCRIPTORES DE ACCESO
-    Una propiedad sin un descriptor de acceso set se considera de solo lectura. 
-    Una propiedad sin un descriptor de acceso get se considera de solo escritura.
-    Una propiedad que tiene ambos descriptores de acceso es de lectura y escritura. 
-    
-    GET
-    El bloque de código del descriptor de acceso get se ejecuta cuando se lee la propiedad.
-
-    SET
-    El bloque de código del descriptor de acceso set oinit se ejecuta cuando se asigna un 
-    valor a la propiedad.Usa un parámetro implícito denominado value, 
-    cuyo tipo es el tipo de la propiedad. 
-
-    Las propiedades tienen muchos usos:
-
-    Pueden validar los datos antes de permitir un cambio.
-    Pueden exponer datos de forma transparente en una clase donde esos datos se recuperan de algún otro origen, como una base de datos.
-    Pueden realizar una acción cuando se cambian los datos, como generar un evento o cambiar el valor de otros campos.
-*/
-
 namespace Semantica
 {
     public class Token
@@ -52,20 +25,11 @@ namespace Semantica
             PalabraReservada
         }
         private string content;
-        //Creando una variable para generar métodos de acceso
-        //a la variable privada content
         public string Content {
             get => content;
             set => content = value;
         }
-        //Ahora puede invocar al método get invocando a la variable Content
-        //Ejemplo: Content es equivalente a getContent()
-        //Quiere decir que manda a llamar al método get y la variable Content
-        //obtiene el valor que tenga actualmente almacenado content
 
-        //Puedes invocar al método set asignandole un valor como a una variable
-        //Ejemplo: Content = "A" es equivalente a setContent("A")
-        //Ahora se le asignará el valor a la propiedad content mediante Content
         private Tipos clasification;
         public Tipos Clasification {
             get => clasification;
@@ -76,21 +40,5 @@ namespace Semantica
             content = "";
             clasification = Tipos.Caracter;
         }
-
-        /*public void setContent(string content) {
-            this.content = content;
-        }
-
-        public void setClasification(Tipos clasification) {
-            this.clasification = clasification;
-        }
-
-        public string getContent() {
-            return content;
-        }
-
-        public Tipos getClasification() {
-            return clasification;
-        }*/
     }
 }

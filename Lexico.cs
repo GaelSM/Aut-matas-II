@@ -1,19 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.IO;
-using System.Linq.Expressions;
-
 namespace Semantica
 {
     //IDisposible es una interfaz para implemetar Destructor
     public class Lexico : Token, IDisposable
     {
-        protected int line = 1;
-        protected bool wasNewLine;
-        protected int column = 0;
-        protected int lastColumn = 0;
         const int F = -1; //Estado de aceptación Final
         const int E = -2; //Estado de aceptación Error
         readonly StreamReader file; //Archivo a leer
@@ -61,28 +50,6 @@ namespace Semantica
                 { 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 37, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36, 36  },
                 { 36, 36, 36, 36, 36, 36, 35, 36, 36, 36, 36, 36, 37, 36, 36, 36, 36, 36, 36, 36, 36, 36,  0, 36, 36, 36  }
             };
-        /*
-        public Lexico()
-        {
-            logger = new StreamWriter("./main.log");
-            assembly = new StreamWriter("./main.asm");
-
-            logger.AutoFlush = true;
-            assembly.AutoFlush = true;
-
-            if (File.Exists("./main.cpp"))
-            {
-                file = new StreamReader("./main.cpp");
-            }
-            else
-            {
-                throw new Error("File main.cpp doesn´t exist", logger);
-            }
-
-            printData("main");
-        }
-        */
-
         public Lexico(string file = "main.cpp")
         {
             if (!(Path.GetExtension(file) == ".cpp"))
@@ -264,7 +231,7 @@ namespace Semantica
             string buffer = "";
             int state = 0;
 
-            wasNewLine = false;
+            Error.wasNewLine = false;
 
             while (state >= 0)
             {
@@ -278,13 +245,13 @@ namespace Semantica
                 if (state >= 0)
                 {
                     file.Read();
-                    column++;
+                    Error.column++;
 
                     if (c == '\n')
                     {
-                        wasNewLine = true;
-                        column = 0;
-                        line++;
+                        Error.wasNewLine = true;
+                        Error.column = 0;
+                        Error.line++;
                     }
 
                     if (state > 0)
@@ -320,7 +287,7 @@ namespace Semantica
                     message = "Lexical, Unclosed comment";
                 }
 
-                throw new Error(message, logger, line, lastColumn);
+                throw new Error(message, logger);
             }
 
             Content = buffer;
@@ -366,18 +333,6 @@ namespace Semantica
 }
 
 /*
-    Está bueno el chisme :)
-    Queseso
-    Modalidad queee?
-    Tsssssssssss
-    Richi GOD o no ?
-
-    FACTO: Memo es GOD
-
-    Cómo que de 0 a 5, ojito, skip, tssssss, racismo
-    Maduro: Persona que...
-    
-
     EXPRESIÓN REGULAR
     Es un método formal el cual a través de una secuencia de 
     carácteres define un patrón de búsqueda.

@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace Semantica
 {
     public class Variable
     {
+        public const int MAX_CHAR_VALUE = 255;
+        public const int MAX_INT_VALUE = 65535;
         public enum TipoDato
         {
             Char,
@@ -26,32 +23,36 @@ namespace Semantica
         }
         public void setValor(float valor)
         {
-            if (tipo == TipoDato.Char && valor <= 255)
+            if (valorToTipoDato(valor) <= tipo)
             {
                 this.valor = valor;
-            }
-            else if (tipo == TipoDato.Int && valor <= 65535)
-            {
-                this.valor = valor;
-            }
-            else if (tipo == TipoDato.Float)
-            {
-                this.valor = valor;
-            }
-            else
-            {
+            } else {
                 throw new Error("Semántico: no se puede asignar un " + valorToTipoDato(valor) + " a un " + tipo);
             }
         }
 
-        private TipoDato valorToTipoDato(float valor) {
-            if(valor <= 255) {
-                return TipoDato.Char;
-            } else if(valor <= 65535) {
-                return TipoDato.Int;
-            } else {
+        public static TipoDato valorToTipoDato(float valor)
+        {
+            if(!float.IsInteger(valor)) {
                 return TipoDato.Float;
             }
+            else if (valor <= MAX_CHAR_VALUE)
+            {
+                return TipoDato.Char;
+            }
+            else if (valor <= MAX_INT_VALUE)
+            {
+                return TipoDato.Int;
+            }
+            else
+            {
+                return TipoDato.Float;
+            }
+        }
+
+        public static int getMaxValueByType(TipoDato type) {
+            if(type == TipoDato.Char) return MAX_CHAR_VALUE;
+            else return MAX_INT_VALUE;
         }
 
         public float getValor()

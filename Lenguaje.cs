@@ -1,12 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 /*
     REQUERIMIENTOS
-    1. Implementar set y get para la clase Token
-    2. Implementar parámetros por default en el constructor del archivo Léxico
+    1. Implementar set y get para la clase Token (LISTO)
+    2. Implementar parámetros por default en los constructores del archivo Léxico (LISTO)
+    3. Implementar línea y columna en los Errores Semánticos (LISTO)
+    4. Implementar máximoTipo en la asignación, es decir, cuando se haga v.setValor(r) (LISTO)
+    5. Aplicar el casteo en el stack (LISTO)
 */
 
 namespace Semantica
@@ -15,16 +13,19 @@ namespace Semantica
     {
         Stack<float> s; //Evaluar expresiones
         List<Variable> l; //Lista de variables
+        Variable.TipoDato maximoTipo;
         public Lenguaje() : base()
         {
             s = new Stack<float>();
             l = new List<Variable>();
+            maximoTipo = Variable.TipoDato.Char;
         }
 
         public Lenguaje(string name) : base(name)
         {
             s = new Stack<float>();
             l = new List<Variable>();
+            maximoTipo = Variable.TipoDato.Char;
         }
 
         private void displayStack()
@@ -113,7 +114,7 @@ namespace Semantica
         {
             if (l.Find(variable => variable.getNombre() == Content) != null)
             {
-                throw new Error("Sintaxis: la variable " + Content + " ya existe", logger, line, column);
+                throw new Error("Sintaxis: la variable " + Content + " ya existe", logger);
             }
 
             Variable v = new(t, Content);
@@ -193,13 +194,16 @@ namespace Semantica
         */
         private void Asignacion(Variable? v = null)
         {
+            //Cada vez que haya una asignación reiniciar el maximo tipo
+            maximoTipo = Variable.TipoDato.Char;
+
             if (v == null)
             {
                 v = l.Find(variable => variable.getNombre() == Content);
 
                 if (v == null)
                 {
-                    throw new Error("Sintaxis: la variable " + Content + " no está definida ", logger, line, column);
+                    throw new Error("Sintaxis: la variable " + Content + " no está definida ", logger);
                 }
             }
 
@@ -229,21 +233,8 @@ namespace Semantica
                         if(float.TryParse(read, out result)) {
                             v.setValor(result);
                         } else {
-                            throw new Error("de Sintaxis: sólo se pueden ingresar números", logger, line, column);
+                            throw new Error("de Sintaxis: sólo se pueden ingresar números", logger);
                         }
-
-                        /*try
-                        {
-                            read = read == null ? "" : read;
-                            float value = float.TryParse(read);
-                            v.setValor(value);
-                        }
-                        catch (Exception error)
-                        {
-                            Console.WriteLine(error);
-
-                            throw new Error("de Sintaxis: sólo se pueden ingresar números", logger, line, column);
-                        }*/
                     }
 
                     match("(");
@@ -252,7 +243,16 @@ namespace Semantica
                 else
                 {
                     Expresion();
+
                     float r = s.Pop();
+
+                    //Console.WriteLine("Tipo de la variable: " + v.getTipoDato());
+                   // Console.WriteLine("Tipo de dato máximo:" + maximoTipo);
+
+                    if(v.getTipoDato() < maximoTipo) {
+                        throw new Error("Semántico: no se puede asignar un " + maximoTipo + " a un " + v.getTipoDato());
+                    }
+
                     v.setValor(r);
                 }
             }
@@ -296,7 +296,6 @@ namespace Semantica
                     case "%=": v.setValor(v.getValor() % r); break;
                 }
             }
-            //displayStack();
         }
         // If -> if (Condicion) bloqueInstrucciones | instruccion
         // (else bloqueInstrucciones | instruccion)?
@@ -336,12 +335,14 @@ namespace Semantica
         // Condicion -> Expresion operadorRelacional Expresion
         private bool Condicion()
         {
+            maximoTipo = Variable.TipoDato.Char;
             Expresion();
             float valor1 = s.Pop();
 
             string operador = Content;
             match(Tipos.OperadorRelacional);
 
+            maximoTipo = Variable.TipoDato.Char;
             Expresion();
             float valor2 = s.Pop();
 
@@ -440,31 +441,11 @@ namespace Semantica
 
             if (Content != ")")
             {
-
-                /*if (Clasification == Tipos.Indentificador)
-                {
-                    Variable? v = l.Find(variable => variable.getNombre() == Content);
-
-                    if (v == null)
-                    {
-                        throw new Error("de Sintaxis: la variable no existe", logger, line, column);
-                    }
-
-                    content += v.getValor();
-                    match(Tipos.Indentificador);
-                }
-                else
-                {
-                    content += Content;
-                    match(Tipos.Cadena);
-                }*/
-
-                Concatenaciones(ref content);
-                
+                Concatenaciones(ref content);   
             }
             else if (console && Content == ")")
             {
-                throw new Error("de Sintaxis: Se esperaba un parámetro", logger, line, column);
+                throw new Error("Sintaxis: Se esperaba un parámetro", logger);
             }
 
             match(")");
@@ -513,7 +494,6 @@ namespace Semantica
                 string operador = Content;
                 match(Tipos.OperadorTermino);
                 Termino();
-                //Console.Write(operador + " ");
 
                 float n1 = s.Pop();
                 float n2 = s.Pop();
@@ -541,8 +521,6 @@ namespace Semantica
                 match(Tipos.OperadorFactor);
                 Factor();
 
-                //Console.Write(operador + " ");
-
                 float n1 = s.Pop();
                 float n2 = s.Pop();
 
@@ -559,8 +537,12 @@ namespace Semantica
         {
             if (Clasification == Tipos.Numero)
             {
+                //Si el tipo de dato del número es mayor al tipo de dato actual, cambiarlo
+                if(maximoTipo < Variable.valorToTipoDato(float.Parse(Content))) {
+                    maximoTipo =  Variable.valorToTipoDato(float.Parse(Content));
+                }
+
                 s.Push(float.Parse(Content));
-                //Console.Write(Content + " ");
                 match(Tipos.Numero);
             }
             else if (Clasification == Tipos.Indentificador)
@@ -569,17 +551,47 @@ namespace Semantica
 
                 if (v == null)
                 {
-                    throw new Error("Sintaxis: la variable " + Content + " no está definida ", logger, line, column);
+                    throw new Error("Sintaxis: la variable " + Content + " no está definida ", logger);
+                }
+
+                if(maximoTipo < v.getTipoDato()) {
+                    maximoTipo = v.getTipoDato();
                 }
 
                 s.Push(v.getValor());
-                //Console.Write(Content + " ");
                 match(Tipos.Indentificador);
             }
             else
             {
                 match("(");
+
+                Variable.TipoDato tipoCasteo = Variable.TipoDato.Char;
+                bool huboCasteo = false;
+
+                if(Clasification == Tipos.TipoDato) {
+                    
+                    switch(Content) {
+                        case "int": tipoCasteo = Variable.TipoDato.Int; break;
+                        case "float": tipoCasteo = Variable.TipoDato.Float; break;
+                    }
+
+                    match(Tipos.TipoDato);
+                    match(")");
+                    match("(");
+
+                    huboCasteo = true;
+                }
+
                 Expresion();
+
+                if(huboCasteo) {
+                    maximoTipo = tipoCasteo;
+
+                    float castedValue = s.Pop();
+                    castedValue %= Variable.getMaxValueByType(maximoTipo) + 1;
+                    s.Push(castedValue);
+                }
+
                 match(")");
             }
         }
@@ -593,7 +605,7 @@ namespace Semantica
 
                 if (v == null)
                 {
-                    throw new Error("de Sintaxis: la variable no existe", logger, line, column);
+                    throw new Error("de Sintaxis: la variable no existe", logger);
                 }
 
                 content += v.getValor();

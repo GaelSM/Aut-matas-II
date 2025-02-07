@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace Semantica
 {
     public class Sintaxis : Lexico
@@ -21,17 +16,17 @@ namespace Semantica
         {
             if (content == Content)
             {
-                lastColumn = column;
+                Error.lastColumn = Error.column;
                 NextToken();
             }
             else
             {
-                if(wasNewLine) {
-                    column = lastColumn + 1;
-                    line--;
+                if(Error.wasNewLine) {
+                    Error.column = Error.lastColumn + 1;
+                    Error.line--;
                 }
 
-                throw new Error("Sintaxis: se espera un " + content, logger, line, column);
+                throw new Error("Sintaxis: se espera un " + content, logger);
             }
         }
         //Comparar tipo específico
@@ -39,17 +34,17 @@ namespace Semantica
         {
             if (clasification == Clasification)
             {
-                lastColumn = column;
+                Error.lastColumn = Error.column;
                 NextToken();
             }
             else
             {
-                if(wasNewLine) {
-                    column = lastColumn + 1;
-                    line--;
+                if(Error.wasNewLine) {
+                    Error.column = Error.lastColumn + 1;
+                    Error.line--;
                 }
                 
-                throw new Error("Sintaxis: se espera un " + clasification, logger, line, column);
+                throw new Error("Sintaxis: se espera un " + clasification, logger);
             }
         }
     }
