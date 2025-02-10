@@ -230,8 +230,10 @@ namespace Semantica
                         string? read = Console.ReadLine();
                         float result;
 
+                        maximoTipo = Variable.TipoDato.Float;
+
                         if(float.TryParse(read, out result)) {
-                            v.setValor(result);
+                            v.setValor(result, maximoTipo);
                         } else {
                             throw new Error("de Sintaxis: sólo se pueden ingresar números", logger);
                         }
@@ -246,14 +248,7 @@ namespace Semantica
 
                     float r = s.Pop();
 
-                    //Console.WriteLine("Tipo de la variable: " + v.getTipoDato());
-                   // Console.WriteLine("Tipo de dato máximo:" + maximoTipo);
-
-                    if(v.getTipoDato() < maximoTipo) {
-                        throw new Error("Semántico: no se puede asignar un " + maximoTipo + " a un " + v.getTipoDato());
-                    }
-
-                    v.setValor(r);
+                    v.setValor(r, maximoTipo);
                 }
             }
             else if (Clasification == Tipos.IncrementoTermino)
