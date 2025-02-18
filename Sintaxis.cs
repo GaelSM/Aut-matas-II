@@ -16,14 +16,14 @@ namespace Semantica
         {
             if (content == Content)
             {
-                Error.lastColumn = Error.column;
+                Error.LastColumn = Error.Column;
                 NextToken();
             }
             else
             {
-                if(Error.wasNewLine) {
-                    Error.column = Error.lastColumn + 1;
-                    Error.line--;
+                if(Error.WasNewLine) {
+                    Error.Column = Error.LastColumn + 1;
+                    Error.Line--;
                 }
 
                 throw new Error("Sintaxis: se espera un " + content, logger);
@@ -34,14 +34,14 @@ namespace Semantica
         {
             if (clasification == Clasification)
             {
-                Error.lastColumn = Error.column;
+                Error.LastColumn = Error.Column;
                 NextToken();
             }
             else
             {
-                if(Error.wasNewLine) {
-                    Error.column = Error.lastColumn + 1;
-                    Error.line--;
+                if(Error.WasNewLine) {
+                    Error.Column = Error.LastColumn + 1;
+                    Error.Line--;
                 }
                 
                 throw new Error("Sintaxis: se espera un " + clasification, logger);
