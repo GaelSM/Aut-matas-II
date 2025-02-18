@@ -231,7 +231,7 @@ namespace Semantica
             string buffer = "";
             int state = 0;
 
-            Error.wasNewLine = false;
+            Error.WasNewLine = false;
 
             while (state >= 0)
             {
@@ -245,13 +245,13 @@ namespace Semantica
                 if (state >= 0)
                 {
                     file.Read();
-                    Error.column++;
+                    Error.Column++;
 
                     if (c == '\n')
                     {
-                        Error.wasNewLine = true;
-                        Error.column = 0;
-                        Error.line++;
+                        Error.WasNewLine = true;
+                        Error.Column = 0;
+                        Error.Line++;
                     }
 
                     if (state > 0)
